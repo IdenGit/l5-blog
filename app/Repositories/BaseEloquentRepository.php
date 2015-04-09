@@ -26,7 +26,7 @@ abstract class BaseEloquentRepository implements BaseRepositoryInterface
      * @param int $take
      * @return mixed
      */
-    public function getAll($take = 5)
+    public function getAll($take=5)
     {
         return $this->dataProvider->paginate($take);
     }
@@ -47,12 +47,11 @@ abstract class BaseEloquentRepository implements BaseRepositoryInterface
     public function create($input = [])
     {
         $this->dataProvider->fill($input);
-
         return $this->dataProvider->save();
     }
 
     /**
-     * @param int   $id
+     * @param int $id
      * @param array $input
      * @return mixed
      */
@@ -62,5 +61,14 @@ abstract class BaseEloquentRepository implements BaseRepositoryInterface
         $model->fill($input);
 
         return $model->save();
+    }
+
+    /**
+     * @param $id
+     */
+    public function destroy($id)
+    {
+        $model = $this->getItem($id);
+        return $model->delete();
     }
 }

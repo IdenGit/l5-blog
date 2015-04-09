@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Post;
 
+use App\Contracts\Repositories\CommentRepositoryInterface;
 use App\Contracts\Repositories\PostRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
@@ -13,17 +14,18 @@ class PostController extends Controller
 
     protected $repository;
 
-    public function __construct(PostRepositoryInterface $repo)
+    public function __construct(PostRepositoryInterface $repo, CommentRepositoryInterface $repoComment)
     {
         $this->middleware('auth');
         $this->repository = $repo;
+        $this->repositoryComment = $repoComment;
     }
 
     public function index()
     {
         $posts = $this->repository->getAll();
 
-        return View::make('post.index')->with('posts', $posts);
+        return view('post.index')->with('posts', $posts);
     }
 
     public function create()
@@ -33,9 +35,9 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $post = new Post($request->all());
-        $post->user_id = $request->user()->id;
-        $post->save();
+        $data = $request->all();
+        $data['user_id'] = $request->user()->id;
+        $this->repository->create($data);
 
         return Redirect::route('posts.show_created_message');
     }
@@ -47,15 +49,17 @@ class PostController extends Controller
 
     public function show(Request $request, $id)
     {
-        $post = Post::find($id);
+        $post = $this->repository->getItem($id);
 
-        return view('post.show', ['post' => $post]);
+        $comments = $this->repositoryComment->getPostComments($id);
+
+        return view('post.show', ['post' => $post, 'comments'=>$comments]);
     }
 
     public function edit(Request $request, $id)
     {
-        $post = Post::find($id);
-        if (Auth::getUser()->id !== $post->user->id) {
+        $post = $this->repository->getItem($id);
+        if ($request->user()->id !== $this->repository->getUserId($id)) {
             return Redirect::back();
         }
 
@@ -64,23 +68,18 @@ class PostController extends Controller
 
     public function update(Request $request, $id)
     {
-        $post = Post::find($id);
-        if (Auth::getUser()->id !== $post->user->id) {
+        if ($request->user()->id !== $this->repository->getUserId($id)) {
             return Redirect::back();
         }
-        $post->title = $request->get('title');
-        $post->content = $request->get('content');
-        $post->save();
-
+        $this->repository->update($id, ['title' => $request->get('title'), 'content' => $request->get('content')]);
         return $this->show($request, $id);
     }
 
     public function destroy(Request $request, $id)
     {
-        $post = Post::find($id);
-        if (Auth::getUser()->id !== $post->user->id) {
+        if (Auth::getUser()->id !== $this->repository->getUserId($id)) {
             return false;
         }
-        $post->delete();
+        $this->repository->destroy($id);
     }
 }

@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\Post;
 
 use App\Contracts\Repositories\CommentRepositoryInterface;
+use App\Contracts\Repositories\PostRepositoryInterface;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -13,9 +14,13 @@ use \Redirect;
 
 class CommentsController extends Controller
 {
-    public function __construct()
+    protected $repository;
+
+    public function __construct(CommentRepositoryInterface $repo, PostRepositoryInterface $repoPost)
     {
         $this->middleware('auth');
+        $this->repository = $repo;
+        $this->repositoryPost = $repoPost;
     }
 
     /**
@@ -23,12 +28,10 @@ class CommentsController extends Controller
      *
      * @return Response
      */
-    public function index(CommentRepositoryInterface $comment)
+    public function index()
     {
-        $user = Auth::getUser();
-        if ($user) {
-            $comments = $comment->getByUserId($user->id);
-
+        if ($user = Auth::getUser()) {
+            $comments = $this->repository->getUserComments($user->id);
             return view('comment.index', ['comments' => $comments]);
         }
     }
@@ -40,7 +43,7 @@ class CommentsController extends Controller
      */
     public function create()
     {
-        return View::make('comment.create');
+        return view('comment.create');
     }
 
     /**
@@ -48,19 +51,13 @@ class CommentsController extends Controller
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-        $user = Auth::getUser();
-        if ($user) {
-            Comment::create(
-                [
-                    'user_id' => $user->id,
-                    'post_id' => Input::get('post_id'),
-                    'content' => Input::get('content')
-                ]
-            );
+        if ($request->user()) {
+            $data = $request->all();
+            $data['user_id'] = $request->user()->id;
+            $this->repository->create($data);
         }
-
         return Redirect::back();
     }
 
@@ -72,7 +69,7 @@ class CommentsController extends Controller
      */
     public function show($id)
     {
-        $comment = Comment::find($id);
+        $comment = $this->repository->getItem($id);
 
         return view('comment.show', ['comment' => $comment]);
     }
@@ -83,12 +80,13 @@ class CommentsController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $comment = Comment::find($id);
-        $comment->load('post');
+        $comment = $this->repository->getItem($id);
 
-        return View::make('comment.edit')->with('comment', $comment);
+        $post = $this->repositoryPost->getAll();
+
+        return view('comment.edit')->with(['comment' => $comment, 'postArray' => $post]);
     }
 
     /**
@@ -97,13 +95,9 @@ class CommentsController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
-        $comment = Comment::find($id);
-        $comment->post_id = Input::get('post_id');
-        $comment->content = Input::get('content');
-        $comment->save();
-
+        $this->repository->update($id, ['post_id' => $request->get('post_id'), 'content' => $request->get('content')]);
         return $this->index();
     }
 
@@ -115,7 +109,6 @@ class CommentsController extends Controller
      */
     public function destroy($id)
     {
-        $comment = Comment::find($id);
-        $comment->delete();
+        $this->repository->destroy($id);
     }
 }

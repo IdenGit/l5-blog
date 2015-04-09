@@ -12,4 +12,15 @@ class PostEloquentRepository extends BaseEloquentRepository implements PostRepos
     {
         $this->dataProvider = $dp;
     }
+
+    public function getUserId($id)
+    {
+        return $this->getItem($id)->user_id;
+    }
+
+    public function getCommentPost($id)
+    {
+        return "";
+    }
+
 }

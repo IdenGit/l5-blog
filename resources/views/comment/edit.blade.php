@@ -13,7 +13,7 @@
                                 <label class="col-md-1 control-label">Theme</label>
                                 <div class="col-md-11">
                                     <select class="form-control" name="post_id">
-                                        @foreach( App\Models\Post::all() as $post )
+                                        @foreach( $postArray as $post )
                                             @if( $comment->post->id == $post->id )
                                                 <option value="{{$post->id}}" selected="selected">
                                                     {{$post->title}}

@@ -25,7 +25,36 @@ Route::controllers(
     ]
 );
 
+class slon
+{
+    public function go($shag)
+    {
+        return $shag*1000;
+    }
+}
+
+class calk
+{
+    public function sum($a = 1, $b = 2)
+    {
+        return $a + $b;
+    }
+
+    public function sum_slon($a = 1)
+    {
+        return $a;
+    }
+
+
+}
+
+
 Route::get(
     'posts/success',
     ['uses' => 'Post\PostController@show_created_message', 'as' => 'posts.show_created_message']
 );
+
+Route::get('calc/{a}/{b}', function (calk $c, $a, $b) {
+    //$c = new calk();
+    return $c->sum_slon($a);
+});

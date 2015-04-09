@@ -26,7 +26,7 @@
                 <span class="label label-primary">Comments</span>
             </div>
         </div>
-        @foreach( $post->comments as $comment )
+        @foreach( $comments as $comment )
             @include('comment.post-row',['comment'=>$comment])
         @endforeach
         @include('comment.post-create',['post_id'=>$post->id])

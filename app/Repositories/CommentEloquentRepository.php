@@ -10,8 +10,27 @@ class CommentEloquentRepository extends BaseEloquentRepository implements Commen
         $this->dataProvider = $comment;
     }
 
-    public function getByUserId($user_id)
+    /**
+     * @param $user_id
+     * @return mixed
+     */
+    public function getUserId($id)
     {
+        return $this->getItem($id)->user_id;
+    }
+
+    /**
+     * @param $user_id
+     */
+    public function getUserComments($user_id){
         return $this->dataProvider->where('user_id', '=', $user_id)->get();
+    }
+
+    /**
+     * @param $post_id
+     * @return mixed
+     */
+    public function getPostComments($post_id){
+        return $this->dataProvider->where('post_id', '=', $post_id)->get();
     }
 }

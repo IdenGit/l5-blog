@@ -2,7 +2,7 @@
 
 class Post extends BaseModel {
 
-	protected $fillable=['title','content'];
+	protected $fillable=['title','content','user_id'];
 
 	public function user(){
 		return $this->belongsTo('\App\Models\User');
