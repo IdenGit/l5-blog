@@ -8,19 +8,35 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use \Auth;
-use \Input;
-use \View;
 use \Redirect;
 
 class CommentsController extends Controller
 {
     protected $repository;
 
+    protected $scopes = [
+        'content'=>[
+            'alias'=>'comment'
+        ],
+        'userId'=>[
+            'alias'=>'user'
+        ],
+        'AtDate'=>[
+            'alias'=>'date'
+        ],
+        'postId'=>[
+            'alias'=>'post'
+        ],
+        'today'=>'today',
+        'sort'=>'sort'
+    ];
+
     public function __construct(CommentRepositoryInterface $repo, PostRepositoryInterface $repoPost)
     {
         $this->middleware('auth');
         $this->repository = $repo;
         $this->repositoryPost = $repoPost;
+        $this->repository->setScopes($this->scopes);
     }
 
     /**

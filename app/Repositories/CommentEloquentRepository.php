@@ -11,7 +11,7 @@ class CommentEloquentRepository extends BaseEloquentRepository implements Commen
     }
 
     /**
-     * @param $user_id
+     * @param integer $id
      * @return mixed
      */
     public function getUserId($id)
@@ -20,17 +20,18 @@ class CommentEloquentRepository extends BaseEloquentRepository implements Commen
     }
 
     /**
-     * @param $user_id
+     * @param integer $user_id
+     * @return mixed
      */
     public function getUserComments($user_id){
-        return $this->dataProvider->where('user_id', '=', $user_id)->get();
+        return $this->applyScopes($this->dataProvider, $this->scopes)->where('user_id', '=', $user_id)->get();
     }
 
     /**
-     * @param $post_id
+     * @param integer $post_id
      * @return mixed
      */
     public function getPostComments($post_id){
-        return $this->dataProvider->where('post_id', '=', $post_id)->get();
+        $this->applyScopes($this->dataProvider, $this->scopes)->where('post_id', '=', $post_id)->get();
     }
 }

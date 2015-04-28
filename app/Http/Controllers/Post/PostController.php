@@ -4,7 +4,6 @@ use App\Contracts\Repositories\CommentRepositoryInterface;
 use App\Contracts\Repositories\PostRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
-use View;
 use Redirect;
 use Illuminate\Http\Request;
 use Auth;
@@ -14,11 +13,24 @@ class PostController extends Controller
 
     protected $repository;
 
+    protected $scopes = [
+        'title'=>'title',
+        'userId'=>[
+            'alias'=>'user'
+        ],
+        'AtDate'=>[
+            'alias'=>'date'
+        ],
+        'today'=>'today',
+        'sort'=>'sort'
+    ];
+
     public function __construct(PostRepositoryInterface $repo, CommentRepositoryInterface $repoComment)
     {
         $this->middleware('auth');
         $this->repository = $repo;
         $this->repositoryComment = $repoComment;
+        $this->repository->setScopes($this->scopes);
     }
 
     public function index()
@@ -75,7 +87,7 @@ class PostController extends Controller
         return $this->show($request, $id);
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
         if (Auth::getUser()->id !== $this->repository->getUserId($id)) {
             return false;

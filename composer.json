@@ -8,7 +8,8 @@
     "phpspec/phpspec": "~2.1"
   },
   "require": {
-    "laravel/framework": "v5.0.1"
+    "laravel/framework": "v5.0.1",
+    "mobileka/scope-applicator": "1.0.0"
   },
   "autoload": {
     "classmap": [

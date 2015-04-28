@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Models\Post;
-use \View;
+use App\Contracts\Repositories\PostRepositoryInterface;
 
 
 class WelcomeController extends Controller {
@@ -17,15 +17,23 @@ class WelcomeController extends Controller {
 	|
 	*/
 
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
-	/*public function __construct()
+	protected $scopes = [
+		'title'=>'title',
+		'userId'=>[
+			'alias'=>'user'
+		],
+		'AtDate'=>[
+			'alias'=>'date'
+		],
+		'today'=>'today',
+		'sort'=>'sort'
+	];
+
+	public function __construct(PostRepositoryInterface $repo)
 	{
-		$this->middleware('guest');
-	}*/
+		$this->repository = $repo;
+		$this->repository->setScopes($this->scopes);
+	}
 
 	/**
 	 * Show the application welcome screen to the user.
@@ -34,8 +42,8 @@ class WelcomeController extends Controller {
 	 */
 	public function index()
 	{
-		$posts =  Post::all();
-		return View::make('post.public')->with('posts',$posts);
+		$posts =  $this->repository->getAll();
+		return view('post.public')->with('posts',$posts);
 	}
 
 }

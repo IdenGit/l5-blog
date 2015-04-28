@@ -1,5 +1,9 @@
 <?php namespace App\Contracts\Repositories;
 
+/**
+ * Interface BaseRepositoryInterface
+ * @package App\Contracts\Repositories
+ */
 interface BaseRepositoryInterface
 {
     /**
@@ -21,7 +25,7 @@ interface BaseRepositoryInterface
     public function create($input = []);
 
     /**
-     * @param int   $id
+     * @param int $id
      * @param array $input
      * @return mixed
      */
@@ -33,4 +37,10 @@ interface BaseRepositoryInterface
      * @return mixed
      */
     public function destroy($id);
+
+    /**
+     * @param array $scopes
+     * @return mixed
+     */
+    public function setScopes($scopes);
 }
