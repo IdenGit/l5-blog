@@ -3,10 +3,11 @@
 interface BaseRepositoryInterface
 {
     /**
-     * @param int $take
+     * @param array $scopes
+     * @param int   $take
      * @return mixed
      */
-    public function getAll($take = 5);
+    public function getAll($scopes = [], $take = 5);
 
     /**
      * @param int $id

@@ -26,7 +26,7 @@ return [
 	|
 	*/
 
-	'default' => 'mysql',
+	'default' => env('DB_DEFAULT'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -50,6 +50,12 @@ return [
 			'driver'   => 'sqlite',
 			'database' => storage_path().'/database.sqlite',
 			'prefix'   => '',
+		],
+
+		'memory' => [
+			'driver' => 'sqlite',
+			'database' => ':memory:',
+			'prefix' => '',
 		],
 
 		'mysql' => [

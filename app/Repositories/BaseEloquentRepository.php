@@ -2,12 +2,13 @@
 
 use App\Contracts\Repositories\BaseRepositoryInterface;
 use App\Models\BaseModel;
+use Mobileka\ScopeApplicator\Laravel\Repository;
 
 /**
  * Class BaseEloquentRepository
  * @package App\Repositories
  */
-abstract class BaseEloquentRepository implements BaseRepositoryInterface
+abstract class BaseEloquentRepository extends Repository implements BaseRepositoryInterface
 {
     /**
      * @var \App\Models\BaseModel
@@ -23,12 +24,13 @@ abstract class BaseEloquentRepository implements BaseRepositoryInterface
     }
 
     /**
-     * @param int $take
+     * @param array $scopes
+     * @param int   $take
      * @return mixed
      */
-    public function getAll($take=5)
+    public function getAll($scopes = [], $take = 5)
     {
-        return $this->dataProvider->paginate($take);
+        return $this->applyScopes($this->dataProvider, $scopes)->paginate($take);
     }
 
     /**

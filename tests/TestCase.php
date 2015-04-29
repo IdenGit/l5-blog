@@ -1,19 +1,27 @@
-<?php
+<?php namespace tests;
 
-class TestCase extends Illuminate\Foundation\Testing\TestCase {
+use Laracasts\TestDummy\Factory as TestDummy;
 
-	/**
-	 * Creates the application.
-	 *
-	 * @return \Illuminate\Foundation\Application
-	 */
-	public function createApplication()
-	{
-		$app = require __DIR__.'/../bootstrap/app.php';
+class TestCase extends \Illuminate\Foundation\Testing\TestCase
+{
+    /**
+     * @var \Laracasts\TestDummy\Factory
+     */
+    protected $factory;
 
-		$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+    /**
+     * Creates the application.
+     *
+     * @return \Illuminate\Foundation\Application
+     */
+    public function createApplication()
+    {
+        $app = require __DIR__ . '/../bootstrap/app.php';
 
-		return $app;
-	}
+        $this->factory = new TestDummy('tests/factories');
 
+        $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+
+        return $app;
+    }
 }

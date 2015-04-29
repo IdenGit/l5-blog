@@ -22,7 +22,8 @@ class CommentEloquentRepository extends BaseEloquentRepository implements Commen
     /**
      * @param $user_id
      */
-    public function getUserComments($user_id){
+    public function getUserComments($user_id)
+    {
         return $this->dataProvider->where('user_id', '=', $user_id)->get();
     }
 
@@ -30,7 +31,17 @@ class CommentEloquentRepository extends BaseEloquentRepository implements Commen
      * @param $post_id
      * @return mixed
      */
-    public function getPostComments($post_id){
+    public function getPostComments($post_id)
+    {
         return $this->dataProvider->where('post_id', '=', $post_id)->get();
+    }
+
+    public function getPost($id)
+    {
+        if (!$comment = $this->getItem($id)) {
+            return null;
+        }
+
+        return $comment->post;
     }
 }

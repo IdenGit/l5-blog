@@ -14,6 +14,10 @@ class PostController extends Controller
 
     protected $repository;
 
+    protected $scopes = [
+        'title'
+    ];
+
     public function __construct(PostRepositoryInterface $repo, CommentRepositoryInterface $repoComment)
     {
         $this->middleware('auth');
@@ -23,7 +27,7 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts = $this->repository->getAll();
+        $posts =  $this->repository->getAll($this->scopes);
 
         return view('post.index')->with('posts', $posts);
     }
@@ -53,7 +57,7 @@ class PostController extends Controller
 
         $comments = $this->repositoryComment->getPostComments($id);
 
-        return view('post.show', ['post' => $post, 'comments'=>$comments]);
+        return view('post.show', ['post' => $post, 'comments' => $comments]);
     }
 
     public function edit(Request $request, $id)
@@ -72,6 +76,7 @@ class PostController extends Controller
             return Redirect::back();
         }
         $this->repository->update($id, ['title' => $request->get('title'), 'content' => $request->get('content')]);
+
         return $this->show($request, $id);
     }
 

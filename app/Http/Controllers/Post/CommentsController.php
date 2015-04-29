@@ -16,11 +16,10 @@ class CommentsController extends Controller
 {
     protected $repository;
 
-    public function __construct(CommentRepositoryInterface $repo, PostRepositoryInterface $repoPost)
+    public function __construct(CommentRepositoryInterface $repo)
     {
         $this->middleware('auth');
         $this->repository = $repo;
-        $this->repositoryPost = $repoPost;
     }
 
     /**
@@ -77,14 +76,15 @@ class CommentsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
-     * @return Response
+     * @param \App\Contracts\Repositories\PostRepositoryInterface $repoPost
+     * @param  int                                                $id
+     * @return \App\Http\Controllers\Post\Response
      */
-    public function edit(Request $request, $id)
+    public function edit(PostRepositoryInterface $repoPost, $id)
     {
         $comment = $this->repository->getItem($id);
 
-        $post = $this->repositoryPost->getAll();
+        $post = $repoPost->getAll();
 
         return view('comment.edit')->with(['comment' => $comment, 'postArray' => $post]);
     }
