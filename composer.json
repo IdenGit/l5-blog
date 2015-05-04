@@ -9,7 +9,8 @@
   },
   "require": {
     "laravel/framework": "v5.0.1",
-    "mobileka/scope-applicator": "1.0.*"
+    "mobileka/scope-applicator": "1.0.*",
+    "barryvdh/laravel-ide-helper": "v2.0.3"
   },
   "repositories": [
     {
