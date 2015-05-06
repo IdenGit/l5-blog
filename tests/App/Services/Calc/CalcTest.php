@@ -17,9 +17,7 @@ use tests\TestCase;
  * @package App\Services\Calc
  */
 class CalcTest extends TestCase {
-    /**
-     * @test
-     */
+
     public function __construct(){
         $this->adder = Mockery::mock('App\Services\Calc\Adder');
         $this->substractor = Mockery::mock('App\Services\Calc\Substractor');
