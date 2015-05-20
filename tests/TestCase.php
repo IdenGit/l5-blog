@@ -20,7 +20,9 @@ class TestCase extends \Illuminate\Foundation\Testing\TestCase
 
         $this->factory = new TestDummy('tests/factories');
 
-        $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+        $console = $app->make('Illuminate\Contracts\Console\Kernel');
+        $console->bootstrap();
+        $console->call('migrate');
 
         return $app;
     }

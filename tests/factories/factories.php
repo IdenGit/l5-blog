@@ -2,6 +2,9 @@
 
 /** @var callable $factory */
 
+$faker->locale('ru_RU');
+
+
 // User
 $factory(
     'App\Models\User',
@@ -20,6 +23,17 @@ $factory(
     [
         'user_id' => 'factory:user',
         'title' => $faker->word,
+        'content' => $faker->paragraph()
+    ]
+);
+
+// Comment
+$factory(
+    'App\Models\Comment',
+    'comment',
+    [
+        'user_id' => 'factory:user',
+        'post_id' => 'factory:post',
         'content' => $faker->paragraph()
     ]
 );
