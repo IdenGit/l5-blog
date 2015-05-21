@@ -6,7 +6,9 @@ use App\Repositories\PostEloquentRepository;
 
 class PostEloquentRepositoryTest extends TestCase
 {
-    /***/
+    /**
+     * @test
+     */
     public function gets_all_records()
     {
         // Arrange
@@ -43,7 +45,9 @@ class PostEloquentRepositoryTest extends TestCase
         $this->assertEquals($post, $result);
     }
 
-    /***/
+    /**
+     * @test
+     */
     public function destroys_item()
     {
         $repository = new PostEloquentRepository(new Post);

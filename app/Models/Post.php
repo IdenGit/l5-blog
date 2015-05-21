@@ -2,7 +2,6 @@
 
 class Post extends BaseModel
 {
-
     protected $fillable = ['title', 'content', 'user_id'];
 
     public function user()

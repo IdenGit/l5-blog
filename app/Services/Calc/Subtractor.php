@@ -1,6 +1,6 @@
 <?php namespace App\Services\Calc;
 
-class Substractor
+class Subtractor
 {
     public function handle($a, $b)
     {
