@@ -3,7 +3,9 @@
 use App\Contracts\Repositories\CommentRepositoryInterface;
 use App\Contracts\Repositories\PostRepositoryInterface;
 use App\Http\Controllers\Controller;
-use App\Models\Post;
+use App\Http\Requests\CreatePostRequest;
+use App\Contracts\Validators\PostValidationInterface;
+use Illuminate\Support\Facades\Validator;
 use View;
 use Redirect;
 use Illuminate\Http\Request;
@@ -27,7 +29,7 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts =  $this->repository->getAll($this->scopes);
+        $posts = $this->repository->getAll($this->scopes);
 
         return view('post.index')->with('posts', $posts);
     }
@@ -37,10 +39,15 @@ class PostController extends Controller
         return view('post.create');
     }
 
-    public function store(Request $request)
+    public function store(CreatePostRequest $request, PostValidationInterface $validator)
     {
         $data = $request->all();
         $data['user_id'] = $request->user()->id;
+
+        if (!$validator->validate($data)) {
+            return Redirect::back()->withErrors($validator->getErrors())->withInput();
+        }
+
         $this->repository->create($data);
 
         return Redirect::route('posts.show_created_message');
@@ -70,11 +77,19 @@ class PostController extends Controller
         return view('post.edit')->with('post', $post);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, PostValidationInterface $validator, $id)
     {
         if ($request->user()->id !== $this->repository->getUserId($id)) {
             return Redirect::back();
         }
+
+        $data = $request->all();
+        $data['user_id'] = $request->user()->id;
+
+        if (!$validator->validate($data, $validator->getUpdateRules())) {
+            return Redirect::back()->withErrors($validator->getErrors())->withInput();
+        }
+
         $this->repository->update($id, ['title' => $request->get('title'), 'content' => $request->get('content')]);
 
         return $this->show($request, $id);

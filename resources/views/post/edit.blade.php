@@ -1,14 +1,24 @@
 @extends('app')
 
 @section('content')
+
+    @foreach($errors->getBags() as $bag)
+        @foreach($bag->getMessages() as $messages)
+            @foreach($messages as $message)
+                {{ $message }} <br/>
+            @endforeach
+        @endforeach
+    @endforeach
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
                     <div class="panel-heading">Create new post</div>
                     <div class="panel-body">
-                        <form class="form-horizontal js-form" role="form" method="POST" action="/post/{{ $post->id  }}">
+                        <form class="form-horizontal js-form" role="form" method="POST" action="/post/{{ $post->id }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="_method" value="PUT" />
 
                             <div class="form-group">
                                 <label class="col-md-1 control-label">Title</label>
@@ -36,7 +46,7 @@
                                 event.preventDefault();
                                 $.ajax({
                                     url: '/post/{{ $post->id }}',
-                                    method: 'PUT',
+                                    method: 'POST',
                                     data: $('.js-form').serialize(),
                                     success: function(response) {
                                         $('body').html(response);
