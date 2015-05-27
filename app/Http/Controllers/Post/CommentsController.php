@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Models\Comment;
+use App\Validators\CommentValidator;
 use Illuminate\Http\Request;
 use \Auth;
 use \Input;
@@ -50,11 +51,14 @@ class CommentsController extends Controller
      *
      * @return Response
      */
-    public function store(Request $request)
+    public function store(Request $request, CommentValidator $validator)
     {
         if ($request->user()) {
             $data = $request->all();
             $data['user_id'] = $request->user()->id;
+            if (!$validator->validate($data)) {
+                return Redirect::back()->withErrors($validator->getErrors())->withInput();
+            }
             $this->repository->create($data);
         }
         return Redirect::back();
@@ -97,6 +101,12 @@ class CommentsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $data = $request->all();
+
+        if (!$validator->validate($data, $validator->getUpdateRules())) {
+            return Redirect::back()->withErrors($validator->getErrors())->withInput();
+        }
+
         $this->repository->update($id, ['post_id' => $request->get('post_id'), 'content' => $request->get('content')]);
         return $this->index();
     }
