@@ -29,3 +29,8 @@ Route::get(
     'posts/success',
     ['uses' => 'Post\PostController@show_created_message', 'as' => 'posts.show_created_message']
 );
+
+Route::get(
+    'test',
+    ['uses' => 'HomeController@test']
+);

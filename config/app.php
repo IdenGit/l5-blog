@@ -146,6 +146,7 @@ return [
 		'App\Providers\RouteServiceProvider',
 		'App\Providers\RepositoryServiceProvider',
 		'App\Providers\ValidationServiceProvider',
+		'App\Providers\UseCaseServiceProvider',
 
 	],
 
