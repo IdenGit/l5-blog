@@ -2,10 +2,11 @@
 
 use App\Contracts\Repositories\CommentRepositoryInterface;
 use App\Contracts\Repositories\PostRepositoryInterface;
+use App\Exceptions\ValidationFailed;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePostRequest;
 use App\Contracts\Validators\PostValidationInterface;
-use Illuminate\Support\Facades\Validator;
+
 use View;
 use Redirect;
 use Illuminate\Http\Request;
@@ -20,7 +21,11 @@ class PostController extends Controller
         'title'
     ];
 
-    public function __construct(PostRepositoryInterface $repo, CommentRepositoryInterface $repoComment)
+    public function __construct(
+        PostRepositoryInterface $repo,
+        CommentRepositoryInterface $repoComment
+
+    )
     {
         $this->middleware('auth');
         $this->repository = $repo;
@@ -44,11 +49,16 @@ class PostController extends Controller
         $data = $request->all();
         $data['user_id'] = $request->user()->id;
 
-        if (!$validator->validate($data)) {
-            return Redirect::back()->withErrors($validator->getErrors())->withInput();
-        }
+        /**
+         * @var \App\Blog\Interactors\CreatePost $createPost
+         */
+        $createPost = app()->make('CreatePost',$data);
 
-        $this->repository->create($data);
+        try{
+            $createPost->call();
+        }catch (ValidationFailed $exception){
+            return Redirect::back()->withErrors($exception->getErrors())->withInput();
+        }
 
         return Redirect::route('posts.show_created_message');
     }

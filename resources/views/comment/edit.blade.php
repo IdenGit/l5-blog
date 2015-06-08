@@ -1,5 +1,14 @@
 @extends('app')
 @section('content')
+
+    @foreach($errors->getBags() as $bag)
+        @foreach($bag->getMessages() as $messages)
+            @foreach($messages as $message)
+                {{ $message }} <br/>
+            @endforeach
+        @endforeach
+    @endforeach
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -9,6 +18,7 @@
                         <form class="form-horizontal js-form" role="form">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <input type="hidden" name="user_id" value="{{ Auth::getUser()->id }}">
+                            <input type="hidden" name="_method" value="PUT">
                             <div class="form-group">
                                 <label class="col-md-1 control-label">Theme</label>
                                 <div class="col-md-11">
@@ -45,7 +55,7 @@
                                 event.preventDefault();
                                 $.ajax({
                                     url: '/comment/{{ $comment->id }}',
-                                    method: 'PUT',
+                                    method: 'POST',
                                     data: $('.js-form').serialize(),
                                     success: function(response) {
                                         $('body').html(response);

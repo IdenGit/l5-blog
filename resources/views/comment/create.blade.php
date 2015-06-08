@@ -1,5 +1,14 @@
 @extends('app')
 @section('content')
+
+    @foreach($errors->getBags() as $bag)
+        @foreach($bag->getMessages() as $messages)
+            @foreach($messages as $message)
+                {{ $message }} <br/>
+            @endforeach
+        @endforeach
+    @endforeach
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">

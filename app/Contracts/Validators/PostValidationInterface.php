@@ -2,6 +2,10 @@
 
 use App\Contracts\Services\ValidationInterface;
 
+/**
+ * Interface PostValidationInterface
+ * @package App\Contracts\Validators
+ */
 interface PostValidationInterface extends ValidationInterface
 {
     /**

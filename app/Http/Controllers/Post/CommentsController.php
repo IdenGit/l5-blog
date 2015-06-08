@@ -4,18 +4,29 @@ use App\Contracts\Repositories\CommentRepositoryInterface;
 use App\Contracts\Repositories\PostRepositoryInterface;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Contracts\Validators\CommentValidationInterface;
 
-use App\Models\Comment;
 use Illuminate\Http\Request;
 use \Auth;
+use Illuminate\Support\Facades\Route;
 use \Input;
 use \View;
 use \Redirect;
 
+/**
+ * Class CommentsController
+ * @package App\Http\Controllers\Post
+ */
 class CommentsController extends Controller
 {
+    /**
+     * @var CommentRepositoryInterface
+     */
     protected $repository;
 
+    /**
+     * @param CommentRepositoryInterface $repo
+     */
     public function __construct(CommentRepositoryInterface $repo)
     {
         $this->middleware('auth');
@@ -50,14 +61,17 @@ class CommentsController extends Controller
      *
      * @return Response
      */
-    public function store(Request $request)
+    public function store(Request $request, CommentValidationInterface $validator)
     {
-        if ($request->user()) {
-            $data = $request->all();
-            $data['user_id'] = $request->user()->id;
-            $this->repository->create($data);
+
+        $data = $request->all();
+        $data['user_id'] = $request->user()->id;
+        if (!$validator->validate($data)) {
+            return Redirect::back()->withErrors($validator->getErrors())->withInput();
         }
-        return Redirect::back();
+
+        $this->repository->create($data);
+        return Redirect::route('comments.show_created_message');
     }
 
     /**
@@ -77,7 +91,7 @@ class CommentsController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param \App\Contracts\Repositories\PostRepositoryInterface $repoPost
-     * @param  int                                                $id
+     * @param  int $id
      * @return \App\Http\Controllers\Post\Response
      */
     public function edit(PostRepositoryInterface $repoPost, $id)
@@ -95,10 +109,17 @@ class CommentsController extends Controller
      * @param  int $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, CommentValidationInterface $validator, $id)
     {
-        $this->repository->update($id, ['post_id' => $request->get('post_id'), 'content' => $request->get('content')]);
-        return $this->index();
+        $data = $request->all();
+        $data['user_id'] = $request->user()->id;
+
+        if (!$validator->validate($data, $validator->getUpdateRules())) {
+            return Redirect::back()->withErrors($validator->getErrors())->withInput();
+        }
+
+        $this->repository->update($id, $data);
+        return $this->show($id);
     }
 
     /**
@@ -110,5 +131,14 @@ class CommentsController extends Controller
     public function destroy($id)
     {
         $this->repository->destroy($id);
+    }
+
+
+    /**
+     * @return View
+     */
+    public function show_created_message()
+    {
+        return view('comment.created');
     }
 }

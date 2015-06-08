@@ -8,5 +8,10 @@ class ValidationServiceProvider extends BaseServiceProvider
             'App\Contracts\Validators\PostValidationInterface',
             'App\Validators\PostValidator'
         );
+
+        $this->app->bind(
+            'App\Contracts\Validators\CommentValidationInterface',
+            'App\Validators\CommentValidator'
+        );
     }
 }

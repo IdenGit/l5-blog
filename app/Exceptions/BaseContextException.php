@@ -1,6 +1,6 @@
 <?php namespace App\Exceptions;
 
-use App\Contexts\BaseContext;
+use App\Blog\Contexts\BaseContext;
 
 abstract class BaseContextException extends \Exception
 {
